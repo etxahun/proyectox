@@ -1,0 +1,102 @@
+##NOTA: La Raspberry Pi B tiene un procesador ARM v6
+
+## Herramienta de configuración de la Raspberr Pi
+apt-get install raspi-config
+
+## lsof = list of open ports
+apt-get install lsof
+
+## Python related
+apt-get install python-picamera
+apt-get install python-rpi.gpio
+apt-get install python-pip
+
+## Python3 related
+apt-get install python3-picamera
+apt-get install python3-rpi.gpio
+apt-get install python3-pip
+
+## NANO text editor
+apt-get install nano
+
+## Node.js + Python-dev
+wget http://node-arm.herokuapp.com/node_archive_armhf.deb
+sudo dpkg -i node_archive_armhf.deb
+sudo apt-get install build-essential python-dev python-rpi.gpio
+
+## Node.js (EL BUENO)
+## Raspberry Pi Model A, B, B+ and Compute Module
+wget https://nodejs.org/dist/v5.1.0/node-v5.1.0-linux-armv6l.tar.gz
+tar -xvf node-v5.1.0-linux-armv6l.tar.gz
+cd node-v5.1.0-linux-armv6l
+sudo cp -R * /usr/local/ 
+
+
+## GIT
+apt-get install git
+
+
+## "usbutils" para poder hacer "lsusb"
+apt-get install usbutils
+
+## Bluetooth BLE Dongle
+apt-get install bluetooth
+apt-get install bluez
+apt-get install bluez-tools
+apt-get install blueman
+apt-get install libdbus-1-dev libdbus-glib-1-dev libglib2.0-dev libical-dev libreadline-dev libudev-dev libusb-dev make
+
+##Configuración Bluetooth Dongle ASUS USB-BT400 en Raspberry Pi
+
+	1) Miramos si ha detectado el dongle:
+	    
+           >lsusb
+
+	   The result will be something like this:
+		Bus 001 Device 001: ID 0b05:17cb Vendor Desc.
+	   Now you have to find the correct device. When you found it, copy the ID without colon and write it into the /sys/bus/usb/drivers/btusb/new_id. In my case it was like:
+
+	3) Copiamos el ID:
+	
+	   >echo “0b05 17cb” >> /sys/bus/usb/drivers/btusb/new_id
+
+	4) Arracamos el modulo bluetooth:
+
+	   >modprobe -v btusb
+
+	5) Editamos el fichero:
+	
+	   >nano /etc/default/bluetooth
+ 
+		HID2HCI_ENABLED=0
+		HID2HCI_UNDO=0
+		HIDD_ENABLED=1
+
+	6) Restart bluetooth and you are ready to go!
+
+	   >sudo invoke-rc.d bluetooth restart
+
+
+## Bluetooth: Comandos hci****
+
+	1) Mostrar los dispositivos:
+
+	    >hciconfig
+
+	2) Levantar el dispositvo:
+
+	   >hciconfig hci0 up
+
+	3) Escanear:
+
+	   >hcitool lescan
+
+	4) Testing connection:
+
+	   The lescan command above should have displayed the MAC address (six hex digits, like 00:1e:3f:22:4b:a7) of any Bluetooth LE devices in range and available for connection. 
+	   You can check a particular device by attempting to make (and then drop) a connection to it, using a command like: 
+
+	    >sudo hcitool lecc 00:1e:3f:22:4b:a7
+
+## Utilizando el comando "bluetoothctl":
+
